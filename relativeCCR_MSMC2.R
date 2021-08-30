@@ -1,16 +1,16 @@
-##################################################
-## Project: cRR - MSMC2 analysis 
-## Date: Sat 19 Sep 13:26:44 2020
-## Author: Carlos S. Reyna-Blanco
-##################################################
+#
+# Project: cRR - MSMC2 analysis 
+# Date: Mon 30 Aug 18:03: 2021
+# Author: Carlos S. Reyna-Blanco
+#
 if (!require("data.table")) install.packages("data.table"); library("data.table")
 if (!require("RColorBrewer")) install.packages("RColorBrewer"); library("RColorBrewer")
-#if (!require("xlsx")) install.packages("xlsx"); library("xlsx")
 
-setwd("/home/reynac/Dropbox/Backup/MSMC2/phased/v2/Results/cRR/")
-#setwd("C://Users/creyn/Dropbox/Backup/MSMC2/phased/v2/Results/cRR")
-setwd("/Users/creyna/Documents/Dropbox/Backup/MSMC2/phased/v2/Results/cRR")
+#setwd("/home/reynac/Dropbox/Backup/MSMC2/phased/v2/Results/cRR/")
+setwd("C://Users/creyn/Dropbox/Backup/MSMC2/withKK1/multi/rCCR/")
 
+
+# Read combined MSMC2 output and estimate rCCR --------------------------------------------------
 createTable <- function(suffix){
   
   files <- list.files(pattern=suffix)
@@ -30,6 +30,7 @@ createTable <- function(suffix){
   return(msmc)
 }
 
+
 getCCRintersect <- function(df, val){
   
   xVec <- gen * ((df$left_time_boundary + df$right_time_boundary)/2) / mu
@@ -46,41 +47,51 @@ getCCRintersect <- function(df, val){
   return(xVec[i - 1] + intersectDistance * (xVec[i] - xVec[i - 1]))
 }
 
-#########################
+
+
+# Reading and manipulating data -------------------------------------------
 df.msmc <- createTable(suffix="combined.msmc2.final.txt")  #read files by providing the suffix
 info <- read.table("samplelist", header = T) #file with samples to be plotted and extra information
 
-period <- list(neo = levels(factor(info[info$Period %in% "Neo",]$Region)),
-               meso = levels(factor(info[info$Period %in% "Meso",]$Region)),
-               fisher = levels(factor(info[info$Period %in% "Fisher",]$Region)))
+period <- list(
+  neo = info[info$Period %in% "Neo",]$Region,
+  fisher = info[info$Period %in% "Fisher",]$Region,
+  meso = info[info$Period %in% "Meso",]$Region
+) 
 
-l.clw <- list("CentralSerbia" = list(brewer.pal(n=9, name = "Greens")[c(7)], c(1,1.6), 'a') , 
-             "EasternMarmara" = list(	"#CCCC00",c(1,1.6),'b'),
-             "Hungary-Neo" = list("blue",c(1,1.6),'c'), #brewer.pal(n=9, name = "Purples")[c(4)]
-             "LowerAustria" = list( "green",c(1,1.6),'d'), #brewer.pal(n=9, name = "Purples")[c(9)]
-             "NorthernGreece" = list("dodgerblue",c(1,1.6),'e'),
-             "SouthernGermany1" = list(brewer.pal(n=9, name = "Purples")[c(5)],c(1,1.6), 'f'), 
-             "SouthernGermany2" =  list(brewer.pal(n=9, name = "Purples")[c(7)],c(1,1.6), 'g'),
-             "ZagrosRegion" = list("brown",c(1,1.6), 'h'),
-             "DanubeGorges-Meso" =  list(brewer.pal(n=9, name = "Reds")[c(5)],c(2,2.4), 'i'),
-             "NorthernEurope-Meso" = list("orange3",c(2,2.4), 'j'),
-             "WesternEurope-Meso" = list("#FF69B4",c(2,2.4), 'k'),
-             "Balkan-Fisher" = list("black",c(3,4), 'l') )
+l.clw <- list(
+             "ZagrosRegion" = list("brown",c(1,1.6), 'A'),
+             "NWAnatolia" = list(	"#CCCC00",c(1,1.6),'B'),
+             "NorthernGreece" = list("dodgerblue",c(1,1.6),'C'),
+             "CentralSerbia" = list(brewer.pal(n=9, name = "Greens")[c(7)], c(1,1.6), 'D') , 
+             #"Hungary-Neo" = list("blue",c(1,1.6),'E'), 
+             "LowerAustria" = list( "green",c(1,1.6),'E'),
+             "SouthernGermany1" = list(brewer.pal(n=9, name = "Purples")[c(5)],c(1,1.6), 'F'), 
+             "SouthernGermany2" =  list(brewer.pal(n=9, name = "Purples")[c(7)],c(1,1.6), 'G'),
+      
+             "Lepenski-Vir" = list("black",c(3,4), 'H'),
+             
+             "NorthernEurope-Meso" = list("orange3",c(2,2.4), 'I'),
+             "Caucasus" = list("#F0E442", c(2,2.4), 'J'),
+             "WesternEurope-Meso" = list("#FF69B4",c(2,2.4), 'K'),
+             "DanubeGorges-Meso" =  list(brewer.pal(n=9, name = "Reds")[c(5)],c(2,2.4), 'L')
+              )
 
 mu <- 1.25e-8
 gen <- 29
+
 splitTime <- vector()
 df.ccR <- data.frame()
-pdf("supFig_cRR_allPairwiseComparison_MSMC2.pdf", width=15.5, height=14.5)
-#png("supFig_cRR_allPairwiseComparison_MSMC2.png", width=1250, height=1150, res=85)
-#pdf(args[2],width=13, height=13)
+pdf("2supFig_cRR_allPairwiseComparison_MSMC2.pdf", width=15.5, height=14.5)
 par(oma = c(4, 1, 1, 1), mai=c(.6,.6,.2,.2) )
 layout.matrix <- matrix(c(1:12,0,13,0,0), nrow = 4, ncol = 4)
 layout(mat = layout.matrix,
       heights = c(1, 1, 1,1), # Heights of the rows
       widths = c(2,2,2,1)) # Widths of the  columns
 
+#n <- "fisher"
 for (n in names(period)){
+  #p <- "Balkan-Fisher"
   for (p in period[[n]]){
     samples <- info[info$Region %in% p,]$Sample
     tmp <- df.msmc[df.msmc$Pop1 %in% samples,]
@@ -90,15 +101,9 @@ for (n in names(period)){
     mtext(l.clw[[p]][[3]], side=3, line=1, adj=0, cex=1, col="black", outer=F, font = 2 )
     mtext(side=1, line=3, "Years ago", col="black", font=1,cex=1.3)
     mtext(side=2, line=3, paste("CCR from",p,sep = " "), col="black", font=1, cex=1.3)
-    #abline(v=1e+04, lty=2,col="black")
-    #abline(v=2e+04, lty=2,col="black")
-    #abline(v=3e+04, lty=2,col="black")
-    #abline(v=4e+04, lty=2,col="black")
+    
     abline(v=2e+04, lty=2,col="black")
-    #abline(v=7.5e+04, lty=2,col="black")
-    #abline(v=1e+05, lty=2,col="black")
     abline(h=0.5,lty=2,col="black")
-    #abline(h=1, lty=2,col="black")
     
     #i <- "AKT16-BAR25"
     for (i in unique(tmp$Pop2)){
@@ -124,12 +129,7 @@ legend("right", cex=1.5, legend=names(l.clw),
        lwd=2.3, ncol=1, bty="n")
 dev.off()
 
-#legend("right", cex=0.7, legend=names(ltype[-which(names(ltype) %in% p)]), 
-#       lty=unlist(lapply(l.clw[-which(names(l.clw) %in% p)], '[[', c(2,1))), 
-#       col=unlist(lapply(l.clw[-which(names(l.clw) %in% p)], '[[', 1)), 
-#       lwd=2, ncol=1, bty="n")
 save(df.ccR,file="ccR.RData")
 write.table(df.ccR, file = "splitTimes_cRR.txt", sep = "\t", quote = FALSE, row.names = F)
-#write.xlsx(df.ccR, "splitTimes_cRR.xlsx", sheetName = "splitTimes", col.names = TRUE, row.names = F, append = FALSE)
 
 
