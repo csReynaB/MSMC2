@@ -6,9 +6,8 @@
 if (!require("data.table")) install.packages("data.table"); library("data.table")
 if (!require("RColorBrewer")) install.packages("RColorBrewer"); library("RColorBrewer")
 
-
-setwd("/home/reynac/Dropbox/Backup/MSMC2/withKK1/single/Ne/")
-#setwd("C://Users/creyn/Dropbox/Backup/MSMC2/phased/v2/singleSamplesOutputMSMC/noPhasedmask/")
+#setwd("/home/reynac/Dropbox/Backup/MSMC2/withKK1/single/Ne/")
+setwd("C://Users/creyn/Dropbox/Backup/MSMC2/withKK1/single/Ne/")
 
 
 createTable <- function(suffix){
@@ -32,30 +31,29 @@ df.msmc <- createTable(suffix="final.txt")
 info <- read.table("samplelist", header = T)
 
  
-period <- list(modern = levels(factor(info[info$Period %in% "Modern",]$Region)),
+period.single <- list(modern = levels(factor(info[info$Period %in% "Modern",]$Region)),
                neo = levels(factor(info[info$Period %in% "Neo",]$Region)),
-               meso = levels(factor(info[info$Period %in% "Meso",]$Region)),
-               fisher = levels(factor(info[info$Period %in% "Fisher",]$Region)))
-
-
-mu <- 1.25e-8
-gen <- 29
-cols <- list("CentralSerbia" = c(brewer.pal(n=9, name = "Greens")[c(6)],brewer.pal(n=9, name = "Greens")[c(7)]),
-             "Caucasus" = "yellow",
+               fisher = levels(factor(info[info$Period %in% "Fisher",]$Region)),
+               meso = levels(factor(info[info$Period %in% "Meso",]$Region))
+               )
+cols.single <- list(
+             "ZagrosRegion" = "brown",
              "EasternMarmara" = c(	"#CCCC00","#999900"),
+             "NorthernGreece" = c("dodgerblue","dodgerblue2"),
+             "CentralSerbia" = c(brewer.pal(n=9, name = "Greens")[c(6)],brewer.pal(n=9, name = "Greens")[c(7)]),
              "Hungary-Neo" = "blue",
              "LowerAustria" = c("green2", "green3"),
-             "NorthernGreece" = c("dodgerblue","dodgerblue2"),
              "SouthernGermany" = c( brewer.pal(n=9, name = "Purples")[c(5)], brewer.pal(n=9, name = "Purples")[c(6)], 
                                     brewer.pal(n=9, name = "Purples")[c(7)], brewer.pal(n=9, name = "Purples")[c(8)]) ,
-             "ZagrosRegion" = "brown",
-             "DanubeGorges-Meso" =  c(brewer.pal(n=9, name = "Reds")[c(5)],brewer.pal(n=9, name = "Reds")[c(6)]),
-             "NorthernEurope-Meso" = "orange3",
+             "Balkan-Fisher" = c(brewer.pal(n=9, name = "Greys")[c(8)],"black"),
+             "NorthernEurope" = "orange3",
+             "Caucasus" = "#F0E442",
              "WesternEurope-Meso"  = c("#FF69B4","pink"),
-             "Balkan-Fisher" = c(brewer.pal(n=9, name = "Greys")[c(8)],"black"))
+             "DanubeGorges-Meso" =  c(brewer.pal(n=9, name = "Reds")[c(5)],brewer.pal(n=9, name = "Reds")[c(6)])
+             )
 
-n <- names(cols)
-labels <- c(as.character(info[info$Region %in% n[1], ]$Sample),
+n <- names(cols.single)
+labels.single <- c(as.character(info[info$Region %in% n[1], ]$Sample),
             as.character(info[info$Region %in% n[2], ]$Sample),
             as.character(info[info$Region %in% n[3], ]$Sample),
             as.character(info[info$Region %in% n[4], ]$Sample),
@@ -67,9 +65,14 @@ labels <- c(as.character(info[info$Region %in% n[1], ]$Sample),
             as.character(info[info$Region %in% n[10], ]$Sample),
             as.character(info[info$Region %in% n[11], ]$Sample),
             as.character(info[info$Region %in% n[12], ]$Sample))
-labels
+
+mu <- 1.25e-8
+gen <- 29
+
+
+# Plot Single Ne ----------------------------------------------------------
+
 pdf("supFig_Ne_singlePairs_MSMC2.pdf",  width=11, height=8.5)
-#png("supFig30_Ne_singlePairs_MSMC2.png", width=1000, height=850, res=82)
 par(oma = c(1, 1, 2, 1),   mai=c(.7,.7,.5,.2) )# mar=c(3,1,3,1) )
 layout.matrix <- matrix(c(1,2,3,4), nrow = 2, ncol = 2)
 layout(mat = layout.matrix,
@@ -80,53 +83,60 @@ plot(df.msmc$left_time_boundary/mu*gen, (1/df.msmc$lambda)/(2*mu), log="x",ylim=
      type="n",cex.axis=1.3, ylab = "", xlab="")
 mtext(side=1, line=3, "Years ago", col="black", font=1,cex=1.4)
 mtext(side=2, line=3, "Ne", col="black", font=1, cex=1.4)
-mtext("a", side=3, line=1, adj=0, cex=2, col="black", outer=F, font = 2 )
+mtext("A", side=3, line=1, adj=0, cex=2, col="black", outer=F, font = 2 )
 
-for (n in period$neo){
+for (n in period.single$neo){
   samples <- info[which (info$Region %in% n),]$Sample
   c <- 1
   for (s in samples){
     tmp <- df.msmc[which(df.msmc$Sample %in% s),]
-    lines(tmp$left_time_boundary/mu*gen, (1/tmp$lambda)/(2*mu), lwd=2, lty=1, type="s", col=cols[[n]][c])
+    lines(tmp$left_time_boundary/mu*gen, (1/tmp$lambda)/(2*mu), lwd=2, lty=1, type="s", col=cols.single[[n]][c])
   c <- c+1
   }
 }
 
-for (m in period$meso){
+for (m in period.single$meso){
   samples <- info[which (info$Region %in% m),]$Sample
   c <- 1
   for (s in samples){
     tmp <- df.msmc[which(df.msmc$Sample %in% s),]
-    lines(tmp$left_time_boundary/mu*gen, (1/tmp$lambda)/(2*mu), lwd=2.5, lty=2, type="s", col=cols[[m]][c])
+    lines(tmp$left_time_boundary/mu*gen, (1/tmp$lambda)/(2*mu), lwd=2.5, lty=2, type="s", col=cols.single[[m]][c])
     c <- c+1
   }
 }
 
-for (f in period$fisher){
+for (f in period.single$fisher){
   samples <- info[which (info$Region %in% f),]$Sample
   c <- 1
   for (s in samples){
     tmp <- df.msmc[which(df.msmc$Sample %in% s),]
-    lines(tmp$left_time_boundary/mu*gen, (1/tmp$lambda)/(2*mu), lwd=2.8, lty=3.4, type="s", col=cols[[f]][c])
+    lines(tmp$left_time_boundary/mu*gen, (1/tmp$lambda)/(2*mu), lwd=2.8, lty=3.4, type="s", col=cols.single[[f]][c])
     c <- c+1
   }
 }
-tmp <- df.msmc[grep("French", df.msmc$Sample),]
-lines(tmp$left_time_boundary/mu*gen, (1/tmp$lambda)/(2*mu), lwd=0.8, lty=4,  type="s", col="orange")
-tmp <- df.msmc[grep("Karitiana", df.msmc$Sample),]
-lines(tmp$left_time_boundary/mu*gen, (1/tmp$lambda)/(2*mu), lwd=0.8, lty=4,  type="s", col="chartreuse2")
-tmp <- df.msmc[grep("Han", df.msmc$Sample),]
-lines(tmp$left_time_boundary/mu*gen, (1/tmp$lambda)/(2*mu), lwd=0.8, lty=4,  type="s", col="turquoise")
+
 tmp <- df.msmc[grep("Mende", df.msmc$Sample),]
 lines(tmp$left_time_boundary/mu*gen, (1/tmp$lambda)/(2*mu), lwd=0.8, lty=4,  type="s", col="gray")
 
-par(fig=c(0, 1, 0, 1), oma=c(0, 0, 4, 0), mar=c(0, 0, 1, 0), new=TRUE)
+tmp <- df.msmc[grep("French", df.msmc$Sample),]
+lines(tmp$left_time_boundary/mu*gen, (1/tmp$lambda)/(2*mu), lwd=0.8, lty=4,  type="s", col="orange")
+
+tmp <- df.msmc[grep("Han", df.msmc$Sample),]
+lines(tmp$left_time_boundary/mu*gen, (1/tmp$lambda)/(2*mu), lwd=0.8, lty=4,  type="s", col="turquoise")
+
+tmp <- df.msmc[grep("Karitiana", df.msmc$Sample),]
+lines(tmp$left_time_boundary/mu*gen, (1/tmp$lambda)/(2*mu), lwd=0.8, lty=4,  type="s", col="chartreuse2")
+
+
+# Legend panel A ----------------------------------------------------------
+
+par(fig=c(0, 1, 0, 1), oma=c(0, 0, 3, 0), mar=c(1, 0, 1, 0), new=TRUE)
 plot(0, type='n', bty='n', xaxt='n', yaxt='n')
-legend("topright", cex=1.1, legend=c("Mende","Han","Karitiana","French", labels), 
-       lty=c(rep(4,4), rep(1,14), rep(2,5), rep(3,2)), col=c("gray","turquoise","chartreuse2","orange",unlist(cols)), 
+legend("topright", cex=1.1, legend=c("Mende","French","Han","Karitiana",labels.single), 
+       lty=c(rep(4,4), rep(1,14), rep(3,2), rep(2,6) ), col=c("gray","orange","turquoise","chartreuse2",unlist(cols.single)), 
        lwd=2, ncol=2, xpd = TRUE, horiz = F, inset = c(0, 0), bty='n')
 
-#dev.off()
+
 
 
 
