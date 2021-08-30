@@ -64,7 +64,9 @@ l.clw <- list(
              "NWAnatolia" = list(	"#CCCC00",c(1,1.6),'B'),
              "NorthernGreece" = list("dodgerblue",c(1,1.6),'C'),
              "CentralSerbia" = list(brewer.pal(n=9, name = "Greens")[c(7)], c(1,1.6), 'D') , 
+             
              #"Hungary-Neo" = list("blue",c(1,1.6),'E'), 
+             
              "LowerAustria" = list( "green",c(1,1.6),'E'),
              "SouthernGermany1" = list(brewer.pal(n=9, name = "Purples")[c(5)],c(1,1.6), 'F'), 
              "SouthernGermany2" =  list(brewer.pal(n=9, name = "Purples")[c(7)],c(1,1.6), 'G'),
