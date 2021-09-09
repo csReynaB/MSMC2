@@ -145,6 +145,7 @@ l.clw <- list(
 
 
 pdf("supFig_bootstrapping_rCRR_MSMC2.pdf", width=183*0.039370 , height=183*0.039370)
+
 #png("supFig_bootstrappingcRR_MSMC2.png", width=1100, height=1100, res=82)
 par(oma = c(3, 1, 1, 1), mai=c(.6,.6,.2,.2) )
 layout.matrix <- matrix(c(1:12), nrow = 4, ncol = 3)
