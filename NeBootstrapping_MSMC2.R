@@ -1,16 +1,12 @@
-##################################################
-## Project: 10X - MSMC2, Ne bootstrapping analysis 
-## Date: Mon 21 19:14:38 2020
-## Author: Carlos S. Reyna-Blanco
-##################################################
+# Project: 10X - MSMC2, Ne bootstrapping analysis 
+# Date: Mon 21 19:14:38 2020
+# Author: Carlos S. Reyna-Blanco
+
 if (!require("data.table")) install.packages("data.table"); library("data.table")
 if (!require("RColorBrewer")) install.packages("RColorBrewer"); library("RColorBrewer")
 
-#setwd("C://Users/creyn/Dropbox/Backup/MSMC2/phased/v2/Results/Ne/bootstrapping/")
-#setwd("C://Users/creyn/Dropbox/Backup/MSMC2/phased/v2/Results/cRR/bootstrapping") 
-#setwd("/home/reynac/Dropbox/Backup/MSMC2/phased/v2/Results/cRR/bootstrapping/")
-setwd("/Users/creyna/Documents/Dropbox/Backup/MSMC2/phased/v2/Results/Ne/bootstrapping/")
-
+#setwd("/home/reynac/Dropbox/Backup/MSMC2/withKK1/pair/Ne/bootstrapping/")
+setwd("C://Users/creyn/Dropbox/Backup/MSMC2/withKK1/pair/Ne/bootstrapping/")
 
 createTable <- function(suffix){
   
@@ -30,7 +26,78 @@ createTable <- function(suffix){
 }
 
 
-createTable <- function(suffix){
+
+#########################
+df.msmc <- createTable(suffix="final.txt")  
+info <- read.table("samplelist", header = T)
+
+period <- list(
+  neo = info[info$Period %in% "Neo",]$Region,
+  fisher = info[info$Period %in% "Fisher",]$Region,
+  meso = info[info$Period %in% "Meso",]$Region
+) 
+
+l.clw <- list(
+  "ZagrosRegion" = list("brown",c(1,1.6), 'A'),
+  "NWAnatolia" = list(	"#CCCC00",c(1,1.6),'B'),
+  "NorthernGreece" = list("dodgerblue",c(1,1.6),'C'),
+  "CentralSerbia" = list(brewer.pal(n=9, name = "Greens")[c(7)], c(1,1.6), 'D') , 
+  
+  #"Hungary-Neo" = list("blue",c(1,1.6),'E'), 
+  
+  "LowerAustria" = list( "green",c(1,1.6),'E'),
+  "SouthernGermany1" = list(brewer.pal(n=9, name = "Purples")[c(5)],c(1,1.6), 'F'), 
+  "SouthernGermany2" =  list(brewer.pal(n=9, name = "Purples")[c(7)],c(1,1.6), 'G'),
+  
+  "Lepenski-Vir" = list("black",c(3,4), 'H'),
+  
+  "NorthernEurope-Meso" = list("orange3",c(2,2.4), 'I'),
+  "Caucasus" = list("#F0E442", c(2,2.4), 'J'),
+  "WesternEurope-Meso" = list("#FF69B4",c(2,2.4), 'K'),
+  "DanubeGorges-Meso" =  list(brewer.pal(n=9, name = "Reds")[c(5)],c(2,2.4), 'L')
+)
+
+
+
+mu <- 1.25e-8
+gen <- 29
+
+pdf("supFig_bootstrappingAncientPopsNe_MSMC2.pdf", width=183*0.039370, height=183*0.039370)
+#png("supFig_bootstrappingAncientPopsNe_MSMC2.png", width=1100, height=1100, res=82)
+#pdf(args[2],width=13, height=13)
+par(oma = c(3, 1, 1, 1), mai=c(.6,.6,.2,.2) )
+layout.matrix <- matrix(c(1:12), nrow = 4, ncol = 3)
+layout(mat = layout.matrix,
+       heights = c(1,1,1), # Heights of the rows
+       widths = c(2,2,2)) # Widths of the  columns
+#n <- "neo"
+for (n in names(period)){
+  #p <- "ZagrosRegion"
+  for (p in period[[n]]){
+    samples <- info[which (info$Region %in% p),]$Sample
+    tmp <- df.msmc[which(df.msmc$Sample %in% samples),]
+    
+    plot(df.msmc$left_time_boundary/mu*gen, (1/df.msmc$lambda)/(2*mu), log="x",ylim=c(0,35000), xlim=c(1e+04,3e+06),
+         type="n", xlab = "", ylab = "", cex.axis = 0.7)
+    mtext(l.clw[[p]][[3]], side=3, line=1, adj=0, cex=0.7, col="black", outer=F, font = 2 )
+    mtext(side=1, line=3, "Years ago", col="black", font=1,cex=0.7)
+    mtext(side=2, line=3, paste("Ne - ", p, sep=" "), col="black", font=1, cex=0.7)
+    text(5e+04, 33000, samples, cex=0.7, adj=0)
+    lines(tmp$left_time_boundary/mu*gen, (1/tmp$lambda)/(2*mu),  lty=1, lwd=2, type="s", col=brewer.pal(n=9, name = "Greys")[c(5)])
+
+    tmp <- tmp[tmp$Rep %in% "final", ]
+    lines(tmp$left_time_boundary/mu*gen, (1/tmp$lambda)/(2*mu),  lty=l.clw[[p]][[c(2,1)]], lwd=2, type="s", col=l.clw[[p]][[1]])
+  }
+}
+
+dev.off()
+
+
+
+
+# rCCR reading table ------------------------------------------------------
+
+createTable1 <- function(suffix){
   
   files <- list.files(pattern=suffix)
   samples <- lapply(files, read.table, header=T)
@@ -49,63 +116,13 @@ createTable <- function(suffix){
   return(msmc)
 }
 
-#########################
+setwd("C://Users/creyn/Dropbox/Backup/MSMC2/withKK1/multi/rCCR/bootstrapping") 
+
 df.msmc <- createTable(suffix="final.txt")  
 info <- read.table("samplelist", header = T)
 
-period <- list(neo = levels(factor(info[info$Period %in% "Neo",]$Region)),
-               meso = levels(factor(info[info$Period %in% "Meso",]$Region)),
-               fisher = levels(factor(info[info$Period %in% "Fisher",]$Region)))  
-
-l.clw <- list("CentralSerbia" = list(brewer.pal(n=9, name = "Greens")[c(7)], c(1,1.6), 'a') , 
-              "EasternMarmara" = list(	"#CCCC00",c(1,1.6),'b'),
-              "Hungary-Neo" = list("blue",c(1,1.6),'c'), #brewer.pal(n=9, name = "Purples")[c(4)]
-              "LowerAustria" = list( "green",c(1,1.6),'d'), #brewer.pal(n=9, name = "Purples")[c(9)]
-              "NorthernGreece" = list("dodgerblue",c(1,1.6),'e'),
-              "SouthernGermany1" = list(brewer.pal(n=9, name = "Purples")[c(5)],c(1,1.6), 'f'), 
-              "SouthernGermany2" =  list(brewer.pal(n=9, name = "Purples")[c(7)],c(1,1.6), 'g'),
-              "ZagrosRegion" = list("brown",c(1,1.6), 'h'),
-              "DanubeGorges-Meso" =  list(brewer.pal(n=9, name = "Reds")[c(5)],c(2,2.4), 'i'),
-              "NorthernEurope-Meso" = list("orange3",c(2,2.4), 'j'),
-              "WesternEurope-Meso" = list("#FF69B4",c(2,2.4), 'k'),
-              "Balkan-Fisher" = list("black",c(3,4), 'l'),
-              "KonyaPlain" = list("yellow",c(1,1.6), 'l'))
-
-
-mu <- 1.25e-8
-gen <- 29
-dev.off()
-pdf("1supFig_bootstrappingAncientPopsNe_MSMC2.pdf", width=183*0.039370, height=183*0.039370)
-png("supFig_bootstrappingAncientPopsNe_MSMC2.png", width=1100, height=1100, res=82)
-#pdf(args[2],width=13, height=13)
-par(oma = c(3, 1, 1, 1), mai=c(.6,.6,.2,.2) )
-layout.matrix <- matrix(c(1:12), nrow = 4, ncol = 3)
-layout(mat = layout.matrix,
-       heights = c(1,1,1), # Heights of the rows
-       widths = c(2,2,2)) # Widths of the  columns
-
-for (n in names(period)){
-  for (p in period[[n]]){
-    samples <- info[which (info$Region %in% p),]$Sample
-    tmp <- df.msmc[which(df.msmc$Sample %in% samples),]
-    
-    plot(df.msmc$left_time_boundary/mu*gen, (1/df.msmc$lambda)/(2*mu), log="x",ylim=c(0,35000), xlim=c(1e+04,3e+06),
-         type="n", xlab = "", ylab = "", cex.axis = 1.3)
-    mtext(l.clw[[p]][[3]], side=3, line=1, adj=0, cex=1, col="black", outer=F, font = 2 )
-    mtext(side=1, line=3, "Years ago", col="black", font=1,cex=1)
-    mtext(side=2, line=3, paste("Ne - ", p, sep=" "), col="black", font=1, cex=1)
-    text(5e+04, 33000, samples, cex=1,adj=0)
-    lines(tmp$left_time_boundary/mu*gen, (1/tmp$lambda)/(2*mu),  lty=1, lwd=2, type="s", col=brewer.pal(n=9, name = "Greys")[c(5)])
-
-    tmp <- tmp[tmp$Rep %in% "final", ]
-    lines(tmp$left_time_boundary/mu*gen, (1/tmp$lambda)/(2*mu),  lty=l.clw[[p]][[c(2,1)]], lwd=2, type="s", col=l.clw[[p]][[1]])
-  }
-}
-
-dev.off()
-
 pdf("supFig_bootstrappingcRR_MSMC2.pdf", width=183*0.039370 , height=183*0.039370)
-png("supFig_bootstrappingcRR_MSMC2.png", width=1100, height=1100, res=82)
+#png("supFig_bootstrappingcRR_MSMC2.png", width=1100, height=1100, res=82)
 par(oma = c(3, 1, 1, 1), mai=c(.6,.6,.2,.2) )
 layout.matrix <- matrix(c(1:12), nrow = 4, ncol = 3)
 layout(mat = layout.matrix,
@@ -113,7 +130,7 @@ layout(mat = layout.matrix,
        widths = c(2,2,2)) # Widths of the  columns
 #n <- "neo"
 #for (n in names(period)){
-  p <- "EasternMarmara"
+  p <- "NWAnatolia"
   #for (p in period[[n]]){
     samples <- info[info$Region %in% p,]$Sample
     tmp <- df.msmc[df.msmc$Pop1 %in% samples,]
