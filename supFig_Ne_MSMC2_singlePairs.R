@@ -43,14 +43,14 @@ period.single <- list(modern = levels(factor(info[info$Period %in% "Modern",]$Re
 )
 cols.single <- list(
   "ZagrosRegion" = "brown",
-  "EasternMarmara" = c(	"#CCCC00","#999900"),
+  "NWAnatolia" = c(	"#CCCC00","#999900"),
   "NorthernGreece" = c("dodgerblue","dodgerblue2"),
   "CentralSerbia" = c(brewer.pal(n=9, name = "Greens")[c(6)],brewer.pal(n=9, name = "Greens")[c(7)]),
   "Hungary-Neo" = "blue",
   "LowerAustria" = c("green2", "green3"),
   "SouthernGermany" = c( brewer.pal(n=9, name = "Purples")[c(5)], brewer.pal(n=9, name = "Purples")[c(6)], 
                          brewer.pal(n=9, name = "Purples")[c(7)], brewer.pal(n=9, name = "Purples")[c(8)]) ,
-  "Balkan-Fisher" = c(brewer.pal(n=9, name = "Greys")[c(8)],"black"),
+  "Lepenski-Vir" = c(brewer.pal(n=9, name = "Greys")[c(8)],"black"),
   "NorthernEurope" = "orange3",
   "Caucasus" = "#F0E442",
   "WesternEurope-Meso"  = c("#FF69B4","pink"),
@@ -115,23 +115,22 @@ for (f in period.single$fisher){
   c <- 1
   for (s in samples){
     tmp <- df.msmc[which(df.msmc$Sample %in% s),]
-    lines(tmp$left_time_boundary/mu*gen, (1/tmp$lambda)/(2*mu), lwd=2.8, lty=3.4, type="s", col=cols.single[[f]][c])
+    lines(tmp$left_time_boundary/mu*gen, (1/tmp$lambda)/(2*mu), lwd=2, lty=1, type="s", col=cols.single[[f]][c])
     c <- c+1
   }
 }
 
 tmp <- df.msmc[grep("Mende", df.msmc$Sample),]
-lines(tmp$left_time_boundary/mu*gen, (1/tmp$lambda)/(2*mu), lwd=0.8, lty=4,  type="s", col="gray")
+lines(tmp$left_time_boundary/mu*gen, (1/tmp$lambda)/(2*mu), lwd=1.5, lty=4,  type="s", col="gray")
 
 tmp <- df.msmc[grep("French", df.msmc$Sample),]
-lines(tmp$left_time_boundary/mu*gen, (1/tmp$lambda)/(2*mu), lwd=0.8, lty=4,  type="s", col="orange")
+lines(tmp$left_time_boundary/mu*gen, (1/tmp$lambda)/(2*mu), lwd=1.5, lty=4,  type="s", col="orange")
 
 tmp <- df.msmc[grep("Han", df.msmc$Sample),]
-lines(tmp$left_time_boundary/mu*gen, (1/tmp$lambda)/(2*mu), lwd=0.8, lty=4,  type="s", col="turquoise")
+lines(tmp$left_time_boundary/mu*gen, (1/tmp$lambda)/(2*mu), lwd=1.5, lty=4,  type="s", col="turquoise")
 
 tmp <- df.msmc[grep("Karitiana", df.msmc$Sample),]
-lines(tmp$left_time_boundary/mu*gen, (1/tmp$lambda)/(2*mu), lwd=0.8, lty=4,  type="s", col="chartreuse2")
-
+lines(tmp$left_time_boundary/mu*gen, (1/tmp$lambda)/(2*mu), lwd=1.5, lty=4,  type="s", col="chartreuse2")
 
 
 # Pairs Ne data -----------------------------------------------------------
@@ -139,20 +138,20 @@ setwd("C://Users/creyn/Dropbox/Backup/MSMC2/withKK1/pair/Ne/")
 
 df.msmc <- createTable(suffix="final.txt")  #read files by providing the suffix
 info <- read.table("samplelist", header = T) #file with samples to be plotted and extra information
-cols <- list("Africa" = "gray",
-             "WEurope" = "orange",
-             "EAsia" = "turquoise",
-             "SAmerica" = "chartreuse2",
+cols <- list("WesternAfrica" = "gray",
+             "WesternEurope" = "orange",
+             "EasternAsia" = "turquoise",
+             "SouthernAmerica" = "chartreuse2",
              
              "ZagrosRegion" = "brown",
-             "EasternMarmara" = c(	"#CCCC00"),
+             "NWAnatolia" = c(	"#CCCC00"),
              "NorthernGreece" = c("dodgerblue"),
              "CentralSerbia" = c(brewer.pal(n=9, name = "Greens")[c(7)]),
              "Hungary-Neo" = "blue",
              "LowerAustria" = "green",
              "SouthernGermany1" = c(brewer.pal(n=9, name = "Purples")[c(5)]), 
              "SouthernGermany2" =  brewer.pal(n=9, name = "Purples")[c(7)],
-             "Balkan-Fisher" = c("black"),
+             "Lepenski-Vir" = c("black"),
              "NorthernEurope-Meso" = "orange3",
              "Caucasus" = "#F0E442",
              "WesternEurope-Meso" = c("#FF69B4"),
@@ -166,8 +165,8 @@ period <- list(modern = info[info$Period %in% "Modern",]$Region[c(4,1,2,3)],
                meso = info[info$Period %in% "Meso",]$Region[c(3,2,1,4)]
 )  
 
-ltype <- list( modern =c(4,1), neo = c(1, 1.6), 
-               fisher = c(3,3.4), meso = c(2,2.4) )
+ltype <- list( modern =c(4,1.5), neo = c(1, 2), 
+               fisher = c(1,2), meso = c(2,2.5) )
 
 
 
@@ -192,14 +191,14 @@ for (n in names(period)){
 par(fig=c(0, 1, 0, 1), oma=c(0, 0, 3, 0), mar=c(1, 0, 1, 0), new=TRUE)
 plot(0, type='n', bty='n', xaxt='n', yaxt='n')
 legend("topright", cex=1.1, legend=c("Mende","French","Han","Karitiana",labels.single), 
-       lty=c(rep(4,4), rep(1,14), rep(3,2), rep(2,6) ), col=c("gray","orange","turquoise","chartreuse2",unlist(cols.single)), 
+       lty=c(rep(4,4), rep(1,14), rep(1,2), rep(2,6) ), col=c("gray","orange","turquoise","chartreuse2",unlist(cols.single)), 
        lwd=2, ncol=2, xpd = TRUE, horiz = F, inset = c(0, 0), bty='n')
 
 # Legend for Panel B ------------------------------------------------------
 par(fig=c(0, 1, 0, 1), oma=c(2, 0, 3, 3), mar=c(3, 2, 1, 0), new=TRUE)
 plot(0, type='n', bty='n', xaxt='n', yaxt='n')
 legend("bottomright", cex=1.1, legend=unlist(period), 
-       lty=c(rep(4,4), rep(1,8), 3, rep(2,4) ), col=unlist(cols),
+       lty=c(rep(4,4), rep(1,8), 1, rep(2,4) ), col=unlist(cols),
        lwd=2, ncol=1, xpd = TRUE, horiz = F, inset = c(0, 0), bty='n')
 
 # END ----

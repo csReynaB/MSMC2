@@ -71,12 +71,12 @@ l.clw <- list(
              "SouthernGermany1" = list(brewer.pal(n=9, name = "Purples")[c(5)],c(1,1.6), 'F'), 
              "SouthernGermany2" =  list(brewer.pal(n=9, name = "Purples")[c(7)],c(1,1.6), 'G'),
       
-             "Lepenski-Vir" = list("black",c(3,4), 'H'),
+             "Lepenski-Vir" = list("black",c(1,1.6), 'H'),
              
-             "NorthernEurope-Meso" = list("orange3",c(2,2.4), 'I'),
-             "Caucasus" = list("#F0E442", c(2,2.4), 'J'),
-             "WesternEurope-Meso" = list("#FF69B4",c(2,2.4), 'K'),
-             "DanubeGorges-Meso" =  list(brewer.pal(n=9, name = "Reds")[c(5)],c(2,2.4), 'L')
+             "NorthernEurope-Meso" = list("orange3",c(2,2.5), 'I'),
+             "Caucasus" = list("#F0E442", c(2,2.5), 'J'),
+             "WesternEurope-Meso" = list("#FF69B4",c(2,2.5), 'K'),
+             "DanubeGorges-Meso" =  list(brewer.pal(n=9, name = "Reds")[c(5)],c(2,2.5), 'L')
               )
 
 mu <- 1.25e-8

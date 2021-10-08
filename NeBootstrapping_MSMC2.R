@@ -5,7 +5,6 @@
 if (!require("data.table")) install.packages("data.table"); library("data.table")
 if (!require("RColorBrewer")) install.packages("RColorBrewer"); library("RColorBrewer")
 
-#setwd("/home/reynac/Dropbox/Backup/MSMC2/withKK1/pair/Ne/bootstrapping/")
 setwd("C://Users/creyn/Dropbox/Backup/MSMC2/withKK1/pair/Ne/bootstrapping/")
 
 createTable <- function(suffix){
@@ -49,12 +48,12 @@ l.clw <- list(
   "SouthernGermany1" = list(brewer.pal(n=9, name = "Purples")[c(5)],c(1,1.6), 'F'), 
   "SouthernGermany2" =  list(brewer.pal(n=9, name = "Purples")[c(7)],c(1,1.6), 'G'),
   
-  "Lepenski-Vir" = list("black",c(3,4), 'H'),
+  "Lepenski-Vir" = list("black",c(1,4), 'H'),
   
-  "NorthernEurope-Meso" = list("orange3",c(2,2.4), 'I'),
-  "Caucasus" = list("#F0E442", c(2,2.4), 'J'),
-  "WesternEurope-Meso" = list("#FF69B4",c(2,2.4), 'K'),
-  "DanubeGorges-Meso" =  list(brewer.pal(n=9, name = "Reds")[c(5)],c(2,2.4), 'L')
+  "NorthernEurope-Meso" = list("orange3",c(2,2.5), 'I'),
+  "Caucasus" = list("#F0E442", c(2,2.5), 'J'),
+  "WesternEurope-Meso" = list("#FF69B4",c(2,2.5), 'K'),
+  "DanubeGorges-Meso" =  list(brewer.pal(n=9, name = "Reds")[c(5)],c(2,2.5), 'L')
 )
 
 
@@ -63,8 +62,6 @@ mu <- 1.25e-8
 gen <- 29
 
 pdf("supFig_bootstrappingAncientPopsNe_MSMC2.pdf", width=183*0.039370, height=183*0.039370)
-#png("supFig_bootstrappingAncientPopsNe_MSMC2.png", width=1100, height=1100, res=82)
-#pdf(args[2],width=13, height=13)
 par(oma = c(3, 1, 1, 1), mai=c(.6,.6,.2,.2) )
 layout.matrix <- matrix(c(1:12), nrow = 4, ncol = 3)
 layout(mat = layout.matrix,
@@ -117,8 +114,6 @@ createTable1 <- function(suffix){
 }
 
 setwd("C://Users/creyn/Dropbox/Backup/MSMC2/withKK1/multi/rCCR/bootstrapping") 
-setwd("/home/reynac/Dropbox/Backup/MSMC2/withKK1/multi/rCCR/bootstrapping/")
-
 
 df.msmc <- createTable1(suffix="final.txt")  
 info <- read.table("samplelist", header = T)
@@ -135,37 +130,29 @@ l.clw <- list(
   "SouthernGermany1" = list(brewer.pal(n=9, name = "Purples")[c(5)],c(1,1.6), 'F'), 
   "SouthernGermany2" =  list(brewer.pal(n=9, name = "Purples")[c(7)],c(1,1.6), 'G'),
   
-  "Lepenski-Vir" = list("black",c(3,4), 'H'),
+  "Lepenski-Vir" = list("black",c(1,4), 'H'),
   
-  "NorthernEurope-Meso" = list("orange3",c(2,2.4), 'I'),
-  "Caucasus" = list("#F0E442", c(2,2.4), 'J'),
-  "WesternEurope-Meso" = list("#FF69B4",c(2,2.4), 'K'),
-  "DanubeGorges-Meso" =  list(brewer.pal(n=9, name = "Reds")[c(5)],c(2,2.4), 'L')
+  "NorthernEurope-Meso" = list("orange3",c(2,2.5), 'I'),
+  "Caucasus" = list("#F0E442", c(2,2.5), 'J'),
+  "WesternEurope-Meso" = list("#FF69B4",c(2,2.5), 'K'),
+  "DanubeGorges-Meso" =  list(brewer.pal(n=9, name = "Reds")[c(5)],c(2,2.5), 'L')
 )
 
 
 pdf("supFig_bootstrapping_rCRR_MSMC2.pdf", width=183*0.039370 , height=183*0.039370)
-
-#png("supFig_bootstrappingcRR_MSMC2.png", width=1100, height=1100, res=82)
 par(oma = c(3, 1, 1, 1), mai=c(.6,.6,.2,.2) )
 layout.matrix <- matrix(c(1:12), nrow = 4, ncol = 3)
 layout(mat = layout.matrix,
        heights = c(1,1,1), # Heights of the rows
        widths = c(2,2,2)) # Widths of the  columns
-#n <- "neo"
-#for (n in names(period)){
   p <- "NWAnatolia"
-  #for (p in period[[n]]){
     samples <- info[info$Region %in% p,]$Sample
     tmp <- df.msmc[df.msmc$Pop1 %in% samples,]
-#unique(tmp$Pop2)[c(9,6,1,7,3,4,11,10,8,2,5)] no bon002
     for (i in unique(tmp$Pop2)[c(12,8,10,7,1,3,4,6,9,5,2,11)]){
       #i <- "NE1"
       pop <- as.character(info[info$Sample %in% i,]$Region)
       tmp2 <- tmp[tmp$Pop2 %in% i, ]
-      #splitTime <- getCCRintersect(tmp2, 0.5)
-      #df.ccR <- rbind(df.ccR, data.frame(Pop1=p, Pop2=pop, Ind1=samples, Ind2=s, DivergenceTime=splitTime))
-      
+
       plot(tmp2$left_time_boundary/mu*gen, 2 * tmp2$lambda01 / (tmp2$lambda00 + tmp2$lambda11), 
            xlim=c(1000,0.5e+05),ylim=c(0,1), log="x", type="n", xlab="", ylab="", cex.axis=0.8)
     
@@ -188,7 +175,5 @@ layout(mat = layout.matrix,
       text(1e+03, 0.8, i, cex=0.8,adj=0)
     }
     
-  #}
-#}
 dev.off()
 
